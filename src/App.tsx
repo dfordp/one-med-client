@@ -6,6 +6,7 @@ import Records from "./pages/Records";
 import Links from "./pages/Links";
 import Relation from "./pages/Relation";
 import Profile from "./pages/Profile";
+import Onboarding from "./pages/Onboarding";
 
 const Navigate = () => {
 
@@ -30,6 +31,7 @@ const Navigate = () => {
       {!isAuthenticated && (
         <Routes>
             <Route path="/auth" element={<Auth />} />
+            <Route path='/onboarding' element={<Onboarding/>}/>
         </Routes>
       )}
     </div>
