@@ -24,7 +24,7 @@ const Navigate = () => {
       </Routes>
       {isAuthenticated && (
         <div className="flex flex-row bg-gray-200 w-screen h-screen">
-          <div>
+          <div className="z-10">
             <Sidebar/>
           </div>
           <div className="flex flex-col">
