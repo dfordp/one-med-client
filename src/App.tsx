@@ -7,25 +7,35 @@ import Links from "./pages/Links";
 import Relation from "./pages/Relation";
 import Profile from "./pages/Profile";
 import Onboarding from "./pages/Onboarding";
+import Sidebar from "./components/Sidebar";
+import TopBar from "./components/TopBar";
 
 const Navigate = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
 
   return (
     <div>
+      <Routes>
+        <Route path='/' element={<LandingPage/>}/>
+      </Routes>
       {isAuthenticated && (
-        <div>
-          <Routes>
-            <Route path='/' element={<LandingPage/>}/>
-            <Route path='/records' element={<Records/>}/>
-            <Route path='/links' element={<Links/>} />
-            <Route path='/relation' element={<Relation/>}/>
-            <Route path='/profile' element={<Profile/>}/>
-          </Routes> 
+        <div className="flex flex-row bg-gray-200 w-screen h-screen">
+          <div>
+            <Sidebar/>
+          </div>
+          <div className="flex flex-col">
+            <TopBar/>
+            <Routes>
+              <Route path='/records' element={<Records/>}/>
+              <Route path='/links' element={<Links/>} />
+              <Route path='/relation' element={<Relation/>}/>
+              <Route path='/profile' element={<Profile/>}/>
+            </Routes> 
+          </div>
         </div>
       )}
       {!isAuthenticated && (

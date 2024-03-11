@@ -1,29 +1,114 @@
+import { useState } from 'react';
+import { FaPlus } from 'react-icons/fa';
+
+import {InputDisabled} from "@/components/ui/inputdisabled"
+import { Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Button } from '@/components/ui/button';
+
 const Onboarding = () => {
+
+  const email = "dilpreetgrover2@gmail.com"
+  const [name, setName] = useState('');
+  const [gender, setGender] = useState('');
+  const [dob, setDob] = useState(null);
+  const [issues, setIssues] = useState([]);
+  const [issueInput, setIssueInput] = useState('');
+
+  const handleDateChange = (event) => {
+    setDob(event.target.value);
+  };
+
+  const handleAddIssue = () => {
+    setIssues([...issues, issueInput]);
+    setIssueInput('');
+  };
+
+  const handleRemoveIssue = (index) => {
+    setIssues(issues.filter((_, i) => i !== index));
+  };
+  
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    console.log({
+      email,
+      name,
+      gender,
+      dob,
+      issues
+    });
+  };
+  
   return (
     <div className="bg-gray-200 w-screen h-screen">
       <div className="flex flex-row justify-center">
         <div className="flex flex-col justify-center min-h-screen">
-          <div className="bg-white w-96 h-5/6 rounded-md">
-              <h1 className="scroll-m-20 text-3xl font-bold tracking-tight flex flex-row justify-start my-5 mx-2">
+          <div className="bg-white w-full h-11/12 rounded-md px-5 my-3 mx-auto">
+              <h1 className="scroll-m-20 text-2xl font-bold tracking-tight flex flex-row justify-start my-5 mx-1">
                   Onboarding
               </h1>
-              <div>
-                email
+              <div className="grid grid-cols-2 gap-4">
+                <div className="font-semibold">
+                  Email
+                  <InputDisabled value={email} className="my-2"/>
+                </div>
+                <div className="font-semibold">
+                  Name
+                  <Input value={name} onChange={e => setName(e.target.value)} placeholder='John Doe' className="my-2"/>
+                </div>
+                <div className="font-semibold flex flex-col">
+                  Gender
+                  <div className='w-full h-10 ring-2 ring-gray-100 rounded-md flex flex-row items-center px-2 my-2'>
+                  <DropdownMenu>
+                  <DropdownMenuTrigger className='outline-none'>{gender || 'Select Gender'}</DropdownMenuTrigger>
+                  <DropdownMenuContent className='w-96 flex flex-col justify-center'>
+                    <DropdownMenuItem onSelect={() => setGender('Male')}>Male</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setGender('Female')}>Female</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setGender('Other')}>Other</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </div>
+                <div className="font-semibold flex flex-col">
+                  Date of Birth
+                  <Input type="date" onChange={handleDateChange} className='w-full my-2' />
+                </div>
+                <div className="font-semibold flex flex-col">
+                  Image
+                  <Input type="file" className='w-full my-2' />
+                </div>
+                <div className="font-semibold flex flex-col">
+                  <div>Issues</div>
+                  <div className="flex flex-row">
+                    <Input 
+                      type="text" 
+                      value={issueInput} 
+                      onChange={(e) => setIssueInput(e.target.value)} 
+                      className='w-full my-2' 
+                    />
+                    <button onClick={handleAddIssue}>
+                      <FaPlus />
+                    </button>
+                  </div>
+                  <div className="flex flex-wrap">
+                    {issues.map((issue, index) => (
+                      <div key={index} className="flex flex-row m-1 p-1 border rounded gap-2">
+                        <div>{issue}</div>
+                        <button onClick={() => handleRemoveIssue(index)}>x</button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
-              <div>
-                name
-              </div>
-              <div>
-                gender
-              </div>
-              <div>
-                DOB
-              </div>
-              <div>
-                image
-              </div>
-              <div>
-                issues
+              <div className='flex flex-row justify-center my-8'>
+                <Button onClick={handleSubmit}>
+                  Submit
+                </Button>
               </div>
           </div>
         </div>
@@ -32,4 +117,4 @@ const Onboarding = () => {
   )
 }
 
-export default Onboarding
+export default Onboarding;
