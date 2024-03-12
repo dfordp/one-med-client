@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { FaRegFileAlt, FaLink, FaSitemap } from 'react-icons/fa';
 import { MdOutlinePerson } from "react-icons/md";
+import { CiLogout } from "react-icons/ci";
 
 const Sidebar = () => {
   const menuItems = [
@@ -11,20 +12,25 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="w-40 h-screen bg-white py-4 shadow-md flex flex-col justify-between">
-      <div className="scroll-m-20 text-2xl font-bold tracking-tight flex flex-row justify-center my-4">
+    <div className="w-40 h-screen bg-white py-6 shadow-md flex flex-col justify-between">
+      <div className="scroll-m-20 text-2xl font-bold tracking-tight flex flex-row justify-center my-1">
         OneMed
       </div>
       <div>
         {menuItems.map((item, index) => (
-          <Link key={index} to={item.route} className="flex items-center gap-4 my-8 ml-7 font-semibold">
+          <Link key={index} to={item.route} className="flex items-center gap-4 my-8 ml-8 font-semibold">
             {item.icon}
             {item.name}
           </Link>
         ))}
       </div>
-      <div className="flex flex-row justify-center">
-        About Us
+      <div className="flex flex-row justify-center items-center gap-2 font-semibold">
+        <div>
+         <CiLogout />
+        </div>
+        <div>
+          Log Out
+        </div>
       </div>
     </div>
   )
