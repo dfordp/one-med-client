@@ -3,7 +3,7 @@ import { ModeToggle } from "./mode-toggle"
 
 const TopBar = () => {
   return (
-    <div className="bg-white w-[1335px] h-[80px] shadow-sm px-4">
+    <div className="bg-white w-[1430px] h-[80px] shadow-sm px-4">
      <div className="flex flex-row justify-end my-3 gap-4">
         <ModeToggle/>
         <Avatar>

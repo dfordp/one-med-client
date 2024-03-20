@@ -1,7 +1,9 @@
 import { format } from 'date-fns';
 import { useState } from "react";
 import { FaCaretDown } from "react-icons/fa";
-import { MdOutlineFileDownload , MdDelete } from "react-icons/md";
+import { MdDelete } from "react-icons/md";
+import { IoLinkOutline } from 'react-icons/io5';
+
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import { Input } from "@/components/ui/input";
 import {
@@ -19,18 +21,13 @@ import {
 import { Button } from "@/components/ui/button"
 
 const Card = ({ linkName, linkUrl }) => (
-  <div className="bg-gray-300 w-72 h-40 rounded-md">
-    <div className="bg-gray-100 h-20 rounded-t">
-      <a href={linkUrl} target="_blank" rel="noopener noreferrer">
-        {linkName}
-      </a>
-    </div>
-    <div className="bg-gray-300 h-20 flex flex-col justify-between px-1 "> 
+  <div className="w-72 h-20 rounded-md">
+    <div className="bg-gray-50 rounded-md h-20 flex flex-col justify-between px-1 "> 
       <div className="font-semibold text-xl">
         {linkName}
       </div>
       <div className="flex flex-row justify-end mb-1 mr-1 gap-2"> 
-        <MdOutlineFileDownload size={25}/>
+        <IoLinkOutline size={25}/>
         <MdDelete size={25}/>
       </div>
     </div>
