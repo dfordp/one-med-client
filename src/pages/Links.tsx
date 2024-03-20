@@ -42,6 +42,10 @@ const Links = () => {
   const [linkName, setLinkName] = useState("");
   const [linkUrl, setLinkUrl] = useState("");
   const [dateOfCreation, setDateOfCreation] = useState("");
+  const [relatedIssue, setRelatedIssue] = useState("");
+
+
+  const issues = ['Issue 1', 'Issue 2', 'Issue 3'];
 
   const links = [
     { name: 'Link 1', url: 'http://example.com/1', date: new Date('2022-01-01') },
@@ -96,12 +100,22 @@ const Links = () => {
                 </label>
 
                 <label>
-                  Link URL:
-                  <Input value={linkUrl} onChange={e => setLinkUrl(e.target.value)} />
+                  Related Issue:
+                  <DropdownMenu>
+                    <DropdownMenuTrigger className="flex flex-row items-center gap-3 py-2"><FaCaretDown/> <div>{relatedIssue || "Select Issue"}</div></DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      {issues.map((issue, index) => (
+                        <DropdownMenuItem key={index} onSelect={() => setRelatedIssue(issue)}>
+                          {issue}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </label>
 
+
                 <label>
-                  Date of Creation:
+                  Date of Experiration:
                   <Input type="date" value={dateOfCreation} onChange={e => setDateOfCreation(e.target.value)} />
                 </label>
 

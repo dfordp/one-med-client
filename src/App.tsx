@@ -15,7 +15,7 @@ const Navigate = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
 
   return (
     <div>
