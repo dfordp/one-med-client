@@ -1,7 +1,6 @@
 import { format } from 'date-fns';
 import { useState } from "react";
-import { FaCaretDown } from "react-icons/fa";
-import { MdDelete } from "react-icons/md";
+import { FaCaretDown,FaTimes } from "react-icons/fa";
 import { IoLinkOutline } from 'react-icons/io5';
 
 import { DialogTrigger } from "@radix-ui/react-dialog";
@@ -28,7 +27,6 @@ const Card = ({ linkName, linkUrl }) => (
       </div>
       <div className="flex flex-row justify-end mb-1 mr-1 gap-2"> 
         <IoLinkOutline size={25}/>
-        <MdDelete size={25}/>
       </div>
     </div>
   </div>
@@ -39,10 +37,20 @@ const Links = () => {
   const [linkName, setLinkName] = useState("");
   const [linkUrl, setLinkUrl] = useState("");
   const [dateOfCreation, setDateOfCreation] = useState("");
-  const [relatedIssue, setRelatedIssue] = useState("");
+  const [relatedIssues, setRelatedIssues] = useState([]);
+  const issues = ['Issue 1', 'Issue 2', 'Issue 3', 'Issue 4']; // replace with your issues
 
+  const handleSelectIssue = (issue) => {
+    if (!relatedIssues.includes(issue)) {
+      setRelatedIssues([...relatedIssues, issue]);
+    } else {
+      setRelatedIssues(relatedIssues.filter(i => i !== issue));
+    }
+  };
 
-  const issues = ['Issue 1', 'Issue 2', 'Issue 3'];
+  const handleRemoveIssue = (issue) => {
+    setRelatedIssues(relatedIssues.filter(i => i !== issue));
+  };
 
   const links = [
     { name: 'Link 1', url: 'http://example.com/1', date: new Date('2022-01-01') },
@@ -99,15 +107,28 @@ const Links = () => {
                 <label>
                   Related Issue:
                   <DropdownMenu>
-                    <DropdownMenuTrigger className="flex flex-row items-center gap-3 py-2"><FaCaretDown/> <div>{relatedIssue || "Select Issue"}</div></DropdownMenuTrigger>
+                    <DropdownMenuTrigger className="flex flex-row items-center gap-3 py-2">
+                      <FaCaretDown/> 
+                      <div>{relatedIssues.length > 0 ? relatedIssues.join(', ') : "Select Issue"}</div>
+                    </DropdownMenuTrigger>
                     <DropdownMenuContent>
                       {issues.map((issue, index) => (
-                        <DropdownMenuItem key={index} onSelect={() => setRelatedIssue(issue)}>
+                        <DropdownMenuItem key={index} onSelect={() => handleSelectIssue(issue)}>
                           {issue}
                         </DropdownMenuItem>
                       ))}
                     </DropdownMenuContent>
                   </DropdownMenu>
+                  <div>
+                    {relatedIssues.map((issue, index) => (
+                      <div key={index} className="flex items-center gap-2">
+                        {issue}
+                        <button onClick={() => handleRemoveIssue(issue)}>
+                          <FaTimes />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </label>
 
 
@@ -117,7 +138,7 @@ const Links = () => {
                 </label>
 
                 <Button onClick={() => setIsOpen(false)}>
-                  Submit
+                  Create
                 </Button>
               </DialogContent>
             </Dialog>

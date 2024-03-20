@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 import { useState } from "react";
-import { FaCaretDown } from "react-icons/fa";
+import { FaCaretDown,FaEye  } from "react-icons/fa";
 import { MdOutlineFileDownload , MdDelete } from "react-icons/md";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import { Input } from "@/components/ui/input";
@@ -16,10 +16,11 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 
-const Card = ({ recordName }) => (
+export const Card = ({ recordName }) => (
   <div className="bg-gray-300 w-72 h-40 rounded-md">
     <div className="bg-gray-100 h-20 rounded-t">
       Card Component
@@ -29,6 +30,18 @@ const Card = ({ recordName }) => (
         {recordName}
       </div>
       <div className="flex flex-row justify-end mb-1 mr-1 gap-2"> 
+      <Dialog>
+      <DialogTrigger><FaEye size={25}/></DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Are you absolutely sure?</DialogTitle>
+          <DialogDescription>
+            This action cannot be undone. This will permanently delete your account
+            and remove your data from our servers.
+          </DialogDescription>
+        </DialogHeader>
+      </DialogContent>
+    </Dialog>
         <MdOutlineFileDownload size={25}/>
         <MdDelete size={25}/>
       </div>

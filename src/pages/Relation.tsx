@@ -19,27 +19,27 @@ import {
 import { Button } from "@/components/ui/button"
 import { IoMdCheckmark } from "react-icons/io";
 import { MdOutlineCancel } from "react-icons/md";
+import { useNavigate } from 'react-router-dom';
 
 
 
-const Card = ({ relativeName, relationType }) => (
-  <div className="bg-gray-300 w-72 h-40 rounded-md">
-    <div className="bg-gray-100 h-20 rounded-t">
+const Card = ({ relativeName, relationType }) => {
+
+  const navigate = useNavigate();
+  
+  return(
+    <div onClick={(e)=>{navigate('/relation/${id}')}} className="w-72 h-20 rounded-md">
+    <div className="flex flex-row gap-3 px-1 py-1 bg-gray-100 h-20 rounded-t">
       <div className="font-semibold text-xl">
         {relativeName}
       </div>
-    </div>
-    <div className="bg-gray-300 h-20 flex flex-col justify-between px-1 "> 
       <div className="font-semibold text-xl">
-        {relationType}
-      </div>
-      <div className="flex flex-row justify-end mb-1 mr-1 gap-2"> 
-        <MdOutlineFileDownload size={25}/>
-        <MdDelete size={25}/>
+        ({relationType})
       </div>
     </div>
   </div>
-);
+  );
+};
 
 const Relations = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -52,19 +52,6 @@ const Relations = () => {
     { name: 'Relation 2', type: 'Type 2', date: new Date('2022-02-01') },
     // Add more relations as needed
   ];
-
-  // Sort relations by date in descending order
-  const sortedRelations = relations.sort((a, b) => b.date.getTime() - a.date.getTime());
-
-  // Group relations by date
-  const relationsByDate = sortedRelations.reduce((acc, relation) => {
-    const dateKey = format(relation.date, 'dd MMMM yyyy');
-    if (!acc[dateKey]) {
-      acc[dateKey] = [];
-    }
-    acc[dateKey].push(relation);
-    return acc;
-  }, {});
 
   return (
     <div className="px-4 py-4 " style={{ maxHeight: '100vh', overflowY: 'auto' }}>
@@ -131,18 +118,11 @@ const Relations = () => {
           </div>
         </div>
       </div>
-      {Object.entries(relationsByDate).map(([date, relations]) => (
-        <div key={date}>
-          <div className="mt-6 mx-6 font-bold">
-            {date}
-          </div>
-          <div className="mt-6 mx-8 grid grid-cols-3 gap-6 overflow-y-auto" style={{ maxHeight: '400px' }}>
-            {relations.map((relation, index) => (
-              <Card key={index} relationName={relation.name} relationType={relation.type} />
-            ))}
-          </div>
-        </div>
-      ))}
+      <div className="mt-6 mx-8 grid grid-cols-3 gap-3 overflow-y-auto" style={{ maxHeight: '400px' }}>
+        {relations.map((relation, index) => (
+          <Card key={index} relativeName={relation.name} relationType={relation.type} />
+        ))}
+      </div>
     </div>
   )
 }

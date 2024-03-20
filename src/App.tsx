@@ -9,6 +9,7 @@ import Profile from "./pages/Profile";
 import Onboarding from "./pages/Onboarding";
 import Sidebar from "./components/Sidebar";
 import TopBar from "./components/TopBar";
+import Individual from "./pages/Individual";
 
 const Navigate = () => {
 
@@ -34,6 +35,7 @@ const Navigate = () => {
               <Route path='/links' element={<Links/>} />
               <Route path='/relation' element={<Relation/>}/>
               <Route path='/profile' element={<Profile/>}/>
+              <Route path='/relation/:id' element={<Individual/>}/>
             </Routes> 
           </div>
         </div>
