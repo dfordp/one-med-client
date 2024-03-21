@@ -18,19 +18,28 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { useNavigate } from 'react-router-dom';
 
-const Card = ({ linkName, linkUrl }) => (
-  <div className="w-72 h-20 rounded-md">
+const LinkCard = ({ linkName,linkIssues, linkUrl }) => {
+
+  const navigate = useNavigate();
+
+  return(
+    <div onClick={(e)=>{navigate(`/link/${123}`)}} className="w-72 h-20 rounded-md">
     <div className="bg-gray-50 rounded-md h-20 flex flex-col justify-between px-1 "> 
       <div className="font-semibold text-xl">
         {linkName}
       </div>
-      <div className="flex flex-row justify-end mb-1 mr-1 gap-2"> 
+      <div className="flex flex-row justify-between mb-1 mx-1 gap-2"> 
+        <div className="font-medium text-xs text-black opacity-75">
+          {linkIssues}
+        </div>
         <IoLinkOutline size={25}/>
       </div>
     </div>
   </div>
-);
+  );
+};
 
 const Links = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -53,8 +62,8 @@ const Links = () => {
   };
 
   const links = [
-    { name: 'Link 1', url: 'http://example.com/1', date: new Date('2022-01-01') },
-    { name: 'Link 2', url: 'http://example.com/2', date: new Date('2022-02-01') },
+    { name: 'Link 1', url: 'http://example.com/1', date: new Date('2022-01-01') , issues: "Issue 1" },
+    { name: 'Link 2', url: 'http://example.com/2', date: new Date('2022-02-01') , issues: "Issue 2"},
     // Add more links as needed
   ];
 
@@ -152,7 +161,7 @@ const Links = () => {
           </div>
           <div className="mt-6 mx-8 grid grid-cols-3 gap-6 overflow-y-auto" style={{ maxHeight: '400px' }}>
             {links.map((link, index) => (
-              <Card key={index} linkName={link.name} linkUrl={link.url} />
+              <LinkCard key={index} linkName={link.name} linkIssues={link.issues} linkUrl={link.url} />
             ))}
           </div>
         </div>

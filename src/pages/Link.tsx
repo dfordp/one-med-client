@@ -90,7 +90,7 @@ export const Card = ({ recordName }) => {
  
 };
 
-const Records = () => {
+const ILink = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [recordName, setRecordName] = useState("");
   const [relatedIssue, setRelatedIssue] = useState("");
@@ -133,74 +133,8 @@ const Records = () => {
     <div className="px-4 py-4 " style={{ maxHeight: '100vh', overflowY: 'auto' }}>
       <div className="flex flex-row justify-between">
         <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight">
-          Records
-        </h1>
-        <div className="my-2 gap-2 flex flex-row">
-          <div className="bg-black text-white px-4 rounded-md">
-          <DropdownMenu>
-            <DropdownMenuTrigger className="flex flex-row items-center gap-3 py-2"><FaCaretDown/> <div>All Records</div></DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem>Issue 1</DropdownMenuItem>
-              <DropdownMenuItem>Issue 2</DropdownMenuItem>
-              <DropdownMenuItem>Issue 3</DropdownMenuItem>
-              <DropdownMenuItem>All Records</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          </div>
-          <div>
-
-            <Dialog>
-              <DialogTrigger>
-                  <Button>
-                  + Create Record
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="font-semibold">
-                <DialogHeader>
-                  <DialogTitle className="text-3xl font-bold">Create Record</DialogTitle>
-                </DialogHeader>
-
-                <label>
-                  Record Name:
-                  <Input value={recordName} onChange={e => setRecordName(e.target.value)} />
-                </label>
-
-                <label>
-                  Related Issue:
-                  <DropdownMenu>
-                    <DropdownMenuTrigger className="flex flex-row items-center gap-3 py-2"><FaCaretDown/> <div>{relatedIssue || "Select Issue"}</div></DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      {issues.map((issue, index) => (
-                        <DropdownMenuItem key={index} onSelect={() => setRelatedIssue(issue)}>
-                          {issue}
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </label>
-
-                <label>
-                  Date of Creation:
-                  <Input type="date" value={dateOfCreation} onChange={e => setDateOfCreation(e.target.value)} />
-                </label>
-
-                <label>
-                  Doctor Name:
-                  <Input className="my-2" value={doctorName} onChange={e => setDoctorName(e.target.value)} />
-                </label>
-
-                <label>
-                  Attachments:
-                  <InputFile multiple onChange={handleFileChange}/>
-                </label>
-
-                <Button onClick={() => setIsOpen(false)}>
-                  Submit
-                </Button>
-              </DialogContent>
-            </Dialog>
-          </div>
-        </div>
+          Link : 123
+        </h1> 
       </div>
       {Object.entries(recordsByDate).map(([date, records]) => (
         <div key={date}>
@@ -218,4 +152,4 @@ const Records = () => {
   )
 }
 
-export default Records;
+export default ILink;

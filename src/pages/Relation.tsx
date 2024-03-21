@@ -1,7 +1,5 @@
-import { format } from 'date-fns';
 import { useState } from "react";
 import { FaCaretDown } from "react-icons/fa";
-import { MdOutlineFileDownload , MdDelete } from "react-icons/md";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import { Input } from "@/components/ui/input";
 import {
@@ -23,12 +21,12 @@ import { useNavigate } from 'react-router-dom';
 
 
 
-const Card = ({ relativeName, relationType }) => {
+const RelationCard = ({ relativeName, relationType }) => {
 
   const navigate = useNavigate();
   
   return(
-    <div onClick={(e)=>{navigate('/relation/${id}')}} className="w-72 h-20 rounded-md">
+    <div onClick={(e)=>{navigate(`/relation/${123}`)}} className="w-72 h-20 rounded-md">
     <div className="flex flex-row gap-3 px-1 py-1 bg-gray-100 h-20 rounded-t">
       <div className="font-semibold text-xl">
         {relativeName}
@@ -42,7 +40,6 @@ const Card = ({ relativeName, relationType }) => {
 };
 
 const Relations = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const [relationName, setRelationName] = useState("");
   const [relationType, setRelationType] = useState("");
   const [relationEmail, setRelationEmail] = useState("");
@@ -120,7 +117,7 @@ const Relations = () => {
       </div>
       <div className="mt-6 mx-8 grid grid-cols-3 gap-3 overflow-y-auto" style={{ maxHeight: '400px' }}>
         {relations.map((relation, index) => (
-          <Card key={index} relativeName={relation.name} relationType={relation.type} />
+          <RelationCard key={index} relativeName={relation.name} relationType={relation.type} />
         ))}
       </div>
     </div>
