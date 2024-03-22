@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from '@/components/ui/button';
+import axios from 'axios';
 
 const Onboarding = () => {
 
@@ -19,9 +20,14 @@ const Onboarding = () => {
   const [dob, setDob] = useState(null);
   const [issues, setIssues] = useState([]);
   const [issueInput, setIssueInput] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const handleDateChange = (event) => {
     setDob(event.target.value);
+  };
+
+  const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
   };
 
   const handleAddIssue = () => {
@@ -33,15 +39,37 @@ const Onboarding = () => {
     setIssues(issues.filter((_, i) => i !== index));
   };
   
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log({
-      email,
-      name,
-      gender,
-      dob,
-      issues
-    });
+  const handleSubmit = async (event) => { 
+
+    try{
+      event.preventDefault();
+      console.log({
+        email,
+        name,
+        gender,
+        dob,
+        issues,
+        selectedFile
+      });
+      const data = {
+        email,
+        name,
+        gender,
+        dob,
+        issues,
+        selectedFile
+      }
+      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/register`, data, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      console.log(res); 
+    }
+    catch(e){
+      console.log(e);   
+    }
+    
   };
   
   return (
@@ -80,7 +108,7 @@ const Onboarding = () => {
                 </div>
                 <div className="font-semibold flex flex-col">
                   Image
-                  <Input type="file" className='w-full my-2' />
+                  <Input type="file" className='w-full my-2' onChange={handleFileChange} />
                 </div>
                 <div className="font-semibold flex flex-col">
                   <div>Issues</div>

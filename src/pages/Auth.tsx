@@ -10,15 +10,21 @@ const Auth = () => {
 
 
   const sendUserData = async (data) => {
-    try{
-        const checkUser = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/getUserByEmail/${data.email}`);
-        if (!checkUser.data) {
-          localStorage.setItem("email",data.email);
-          navigate('/onboarding');
-        }
-    }
-    catch(error){
-        console.log(error);
+    try {
+      const checkUser = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/getUserByEmail/${data.email}`);
+      console.log(checkUser);
+
+      if(checkUser.data){
+        navigate('/records');
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        localStorage.setItem("email",data.email);
+        navigate('/onboarding');
+      } else {
+        // Handle other errors here
+        console.error(error);
+      }
     }
 }
 
@@ -29,6 +35,7 @@ const Auth = () => {
           const data = {
               email : email
           }
+          console.log(data);
           sendUserData(data)
       }).catch((error) => {
           console.log(error);
