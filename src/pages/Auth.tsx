@@ -15,7 +15,11 @@ const Auth = () => {
       console.log(checkUser);
 
       if(checkUser.data){
-        navigate('/records');
+        const token = checkUser.data.token;
+        const _id = checkUser.data.user._id;
+        localStorage.setItem("token",token);
+        localStorage.setItem("_id",_id); 
+        window.location.reload();
       }
     } catch (error) {
       if (error.response && error.response.status === 404) {

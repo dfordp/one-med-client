@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation, Link } from 'react-router-dom';
 import LandingPage from "./pages/LandingPage";
 import Auth from "./pages/Auth";
@@ -11,19 +11,32 @@ import Onboarding from "./pages/Onboarding";
 import Sidebar from "./components/Sidebar";
 import TopBar from "./components/TopBar";
 import Individual from "./pages/Individual";
+import { useRecoilState } from "recoil";
+import {Authenticated} from "./atom"
 
 const Navigate = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setisAuthenticated] = useRecoilState(Authenticated);
+
+  useEffect(
+    ()=>{
+      const check = localStorage.getItem("token");
+
+      if(check){
+        setisAuthenticated(true);
+        navigate('/records');
+      }
+      else{
+        navigate('/auth');
+      }
+    }
+    ,[])
 
   return (
     <div>
-      <Routes>
-        <Route path='/' element={<LandingPage/>}/>
-      </Routes>
       {isAuthenticated && (
         <div className="flex flex-row bg-gray-200 w-screen h-screen">
           <div className="z-10">
@@ -46,6 +59,7 @@ const Navigate = () => {
         <Routes>
             <Route path="/auth" element={<Auth />} />
             <Route path='/onboarding' element={<Onboarding/>}/>
+            <Route path='/' element={<LandingPage/>}/>
         </Routes>
       )}
     </div>

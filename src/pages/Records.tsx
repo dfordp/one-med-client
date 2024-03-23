@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { FaCaretDown,FaEye  } from "react-icons/fa";
 import { MdOutlineFileDownload , MdDelete } from "react-icons/md";
 import { DialogTrigger } from "@radix-ui/react-dialog";
@@ -25,6 +25,9 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
+import { useNavigate } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
+import {Authenticated} from "../atom"
 
 
 export const Card = ({ recordName }) => {
@@ -98,6 +101,22 @@ const Records = () => {
   const [doctorName, setDoctorName] = useState("");
   const [files, setFiles] = useState<FileList | null>(null);
 
+  const navigate = useNavigate();
+  const [isAuthenticated, setisAuthenticated] = useRecoilState(Authenticated);
+
+  useEffect(
+    ()=>{
+      const check = localStorage.getItem("token");
+
+      if(check){
+        setisAuthenticated(true);
+      }
+      else{
+        navigate('/auth');
+      }
+    }
+    ,[])
+
   const issues = ['Issue 1', 'Issue 2', 'Issue 3'];
   const records = [
     { name: 'Record 1', date: new Date('2022-01-01') },
@@ -129,7 +148,8 @@ const Records = () => {
     return acc;
   }, {});
 
-  return (
+
+  return ( 
     <div className="px-4 py-4 " style={{ maxHeight: '100vh', overflowY: 'auto' }}>
       <div className="flex flex-row justify-between">
         <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight">

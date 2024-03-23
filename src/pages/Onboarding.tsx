@@ -11,10 +11,13 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Button } from '@/components/ui/button';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Onboarding = () => {
 
-  const email = "dilpreetgrover2@gmail.com"
+  const navigate = useNavigate();
+
+  const email = localStorage.getItem("email");
   const [name, setName] = useState('');
   const [gender, setGender] = useState('');
   const [dob, setDob] = useState(null);
@@ -64,7 +67,11 @@ const Onboarding = () => {
           'Content-Type': 'multipart/form-data'
         }
       });
-      console.log(res); 
+      const token = res.data.token;
+      const _id = res.data.newUser._id;
+      localStorage.setItem("token",token);
+      localStorage.setItem("_id",_id); 
+      window.location.reload();
     }
     catch(e){
       console.log(e);   
