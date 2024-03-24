@@ -4,7 +4,6 @@ import {googleProvider, auth} from "../helpers/firebase.js"
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 
-
 const Auth = () => {
   const navigate = useNavigate();
 
@@ -17,8 +16,11 @@ const Auth = () => {
       if(checkUser.data){
         const token = checkUser.data.token;
         const _id = checkUser.data.user._id;
+        const email = checkUser.data.user.email;
         localStorage.setItem("token",token);
         localStorage.setItem("_id",_id); 
+        localStorage.setItem("email",email);
+        navigate('/records')
         window.location.reload();
       }
     } catch (error) {

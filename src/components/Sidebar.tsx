@@ -2,6 +2,7 @@ import { IoFileTrayFullOutline , IoLinkOutline, IoPeopleOutline,IoPersonOutline 
 import { Link } from 'react-router-dom';
 
 const Sidebar = () => {
+  
   const menuItems = [
     { name: 'Records', icon: IoFileTrayFullOutline, path: '/records' },
     { name: 'Links', icon: IoLinkOutline , path: '/links' },

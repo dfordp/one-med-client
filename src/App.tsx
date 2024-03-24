@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation, Link } from 'react-router-dom';
+import { useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import LandingPage from "./pages/LandingPage";
 import Auth from "./pages/Auth";
 import Records from "./pages/Records";
@@ -13,12 +13,11 @@ import TopBar from "./components/TopBar";
 import Individual from "./pages/Individual";
 import { useRecoilState } from "recoil";
 import {Authenticated} from "./atom"
+// import { PrivateRoute } from "./components/PrivateRoute";
 
 const Navigate = () => {
 
-  const navigate = useNavigate();
-  const location = useLocation();
-
+  const navigate = useNavigate(); 
   const [isAuthenticated, setisAuthenticated] = useRecoilState(Authenticated);
 
   useEffect(
@@ -27,13 +26,13 @@ const Navigate = () => {
 
       if(check){
         setisAuthenticated(true);
-        navigate('/records');
       }
       else{
+        setisAuthenticated(false);
         navigate('/auth');
       }
     }
-    ,[])
+    ,[navigate,setisAuthenticated])
 
   return (
     <div>
