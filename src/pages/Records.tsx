@@ -1,10 +1,9 @@
-import { format } from 'date-fns';
+import { parseISO, format } from 'date-fns';
 import { useState, useEffect } from "react";
 import { FaCaretDown, FaEye } from "react-icons/fa";
 import { MdOutlineFileDownload, MdDelete } from "react-icons/md";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import { Input } from "@/components/ui/input";
-import { InputFile } from "@/components/ui/inputform";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,23 +17,23 @@ import {
   DialogTitle
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel"
+// import {
+//   Carousel,
+//   CarouselContent,
+//   CarouselItem,
+//   CarouselNext,
+//   CarouselPrevious,
+// } from "@/components/ui/carousel"
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { Authenticated } from "../atom"
 import axios from 'axios';
 
-export const Card = ({ recordName }) => {
+export const Card = ({ recordName, recordAttachment , recordIssues ,recordAppointment,recordDoctor}) => {
   return (
     <div className="bg-gray-300 w-72 h-40 rounded-md">
       <div className="bg-gray-100 h-20 rounded-t">
-        Card Component
+        <iframe src={recordAttachment} className='w-full h-full overflow-none'></iframe>
       </div>
       <div className="bg-gray-300 h-20 flex flex-col justify-between px-1 ">
         <div className="font-semibold text-xl">
@@ -52,24 +51,24 @@ export const Card = ({ recordName }) => {
                 </DialogTitle>
                 <div className='flex flex-col gap-2 font-semibold'>
                   <label>
-                    User Name
-                    <Input disabled className="my-4 w-64 outline-2" />
+                    Record Name
+                    <Input disabled className="my-4 w-64 outline-2" value={recordName} />
                   </label>
                   <label>
                     Related Issues
-                    <Input disabled className="my-4 w-64 outline-2" />
+                    <Input disabled className="my-4 w-64 outline-2" value={recordIssues} />
                   </label>
                   <label>
                     Date of Creation
-                    <Input disabled className="my-4 w-64 outline-2" />
+                    <Input disabled className="my-4 w-64 outline-2" value={recordAppointment}/>
                   </label>
                   <label>
                     Doctor Name
-                    <Input disabled className="my-4 w-64 outline-2" />
+                    <Input disabled className="my-4 w-64 outline-2" value={recordDoctor} />
                   </label>
                   <label>
-                    Record Attachments
-                    <Carousel className='w-64'>
+                    Record Attachment
+                    {/* <Carousel className='w-64'>
                       <CarouselContent className='w-64 h-64 flex flex-row justify-center'>
                         <CarouselItem>Record 1</CarouselItem>
                         <CarouselItem>Record 2</CarouselItem>
@@ -77,7 +76,11 @@ export const Card = ({ recordName }) => {
                       </CarouselContent>
                       <CarouselPrevious />
                       <CarouselNext />
-                    </Carousel>
+                    </Carousel> */}
+                    <div className='my-2 mx-2'>
+                      <iframe src={recordAttachment} className='w-full h-full overflow-none'></iframe>
+                      <a href={recordAttachment} target="_blank" rel="noopener noreferrer">Open Document</a>
+                    </div>
                   </label>
                 </div>
               </DialogHeader>
@@ -92,16 +95,23 @@ export const Card = ({ recordName }) => {
 };
 
 const Records = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const [recordName, setRecordName] = useState("");
   const [relatedIssue, setRelatedIssue] = useState("");
   const [dateOfCreation, setDateOfCreation] = useState("");
   const [doctorName, setDoctorName] = useState("");
   const [files, setFiles] = useState(null);
-  const [selectedIssue, setSelectedIssue] = useState<string | null>(null);
-
+  const [selectedIssue, setSelectedIssue] = useState("All Records");
+  // const [records, setRecords] = useState([]);
   const navigate = useNavigate();
   const [isAuthenticated, setisAuthenticated] = useRecoilState(Authenticated);
+
+  const [issues , setIssues] = useState([]);
+  const [records , setRecords] = useState([]);
+   
+  // const issues = ['Issue 1', 'Issue 2', 'Issue 3'];
+  // const records = [
+  //   { name: 'Record 1', date: '2024-01-01T00:00:00.000Z', issue: issues[0] },
+  // ];
 
   useEffect(
     () => {
@@ -119,14 +129,31 @@ const Records = () => {
     useEffect(() => {
       const fetchData = async () => {
         const _id = localStorage.getItem("_id");
+
+
         try {
-          const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/record/getRecord/${_id}`, {
+
+          const user = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/getUser/${_id}`, {
             headers: {
               'Authorization': localStorage.getItem("token"),
             },
             withCredentials: true
           });
-          console.log(res.data); // or set this data to state
+
+          const records = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/record/getUserRecords/${_id}`, {
+            headers: {
+              'Authorization': localStorage.getItem("token"),
+            },
+            withCredentials: true
+          });
+          console.log(user.data);
+
+          setIssues(user.data.issues);
+          
+          console.log(records.data); 
+
+          setRecords(records.data);
+
         } catch (error) {
           console.error(error);
         }
@@ -135,40 +162,30 @@ const Records = () => {
       fetchData();
     }, []);
 
-  const issues = ['Issue 1', 'Issue 2', 'Issue 3'];
-  const records = [
-    { name: 'Record 1', date: new Date('2022-01-01'), issue: issues[0] },
-    { name: 'Record 2', date: new Date('2022-02-01'), issue: issues[1] },
-    { name: 'Record 3', date: new Date('2022-02-01'), issue: issues[2] },
-    { name: 'Record 4', date: new Date('2022-03-01'), issue: issues[0] },
-    { name: 'Record 5', date: new Date('2022-03-01'), issue: issues[1] },
-    { name: 'Record 6', date: new Date('2022-04-01'), issue: issues[2] },
-    { name: 'Record 7', date: new Date('2022-04-01'), issue: issues[0] },
-    { name: 'Record 8', date: new Date('2022-05-01'), issue: issues[1] },
-    { name: 'Record 9', date: new Date('2022-05-01'), issue: issues[2] },
-    { name: 'Record 10', date: new Date('2022-06-01'), issue: issues[0] },
-  ];
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFiles(event.target.files[0]);
   };
 
-  // Filter the records based on the selected issue
-  const filteredRecords = selectedIssue
-    ? records.filter(record => record.issue === selectedIssue)
-    : records;
+
+
+  const filteredRecords = selectedIssue !== "All Records"
+  ? records.filter(record => record.issue === selectedIssue)
+  : records;
 
   // Sort and group the filtered records by date
-  const sortedRecords = filteredRecords.sort((a, b) => b.date.getTime() - a.date.getTime());
+
+    
+  const sortedRecords = filteredRecords.sort((a, b) => parseISO(b.appointment).getTime() - parseISO(a.appointment).getTime());
+  
   const recordsByDate = sortedRecords.reduce((acc, record) => {
-    const dateKey = format(record.date, 'dd MMMM yyyy');
+    const dateKey = format(parseISO(record.appointment), 'dd MMMM yyyy');
     if (!acc[dateKey]) {
       acc[dateKey] = [];
     }
     acc[dateKey].push(record);
     return acc;
   }, {});
-
   
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -179,7 +196,7 @@ const Records = () => {
     const data = {
       user_id : localStorage.getItem("_id"),
       attachment : files,
-      issues : relatedIssue,
+      issue : relatedIssue,
       appointment : dateOfCreation,
       doctor_name : doctorName,
       recordName : recordName
@@ -285,7 +302,12 @@ const Records = () => {
           </div>
           <div className="mt-6 mx-8 grid grid-cols-3 gap-6 overflow-y-auto" style={{ maxHeight: '400px' }}>
             {records.map((record, index) => (
-              <Card key={index} recordName={record.name} />
+              <Card key={index} 
+              recordName={record.name}
+              recordAppointment={record.appointment}
+              recordIssues={record.issue} 
+              recordDoctor={record.doctor_name} 
+              recordAttachment={record.attachment}/>
             ))}
           </div>
         </div>
@@ -294,4 +316,5 @@ const Records = () => {
   )
 }
 
+//{ recordName, recordAttachment , recordIssues ,recordAppointment,recordDoctor}
 export default Records;
