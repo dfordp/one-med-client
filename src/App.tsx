@@ -33,10 +33,12 @@ const Navigate = () => {
       }
       else{
         setisAuthenticated(false);
-        navigate('/auth');
+        if(location.pathname == "/"){
+          navigate('/auth')
+        }        
       }
     }
-    ,[navigate,setisAuthenticated])
+    ,[navigate,setisAuthenticated,location])
 
   return (
     <div>

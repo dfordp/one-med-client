@@ -29,11 +29,44 @@ import { useRecoilState } from 'recoil';
 import { Authenticated } from "../atom"
 import axios from 'axios';
 
-export const Card = ({ recordName, recordAttachment , recordIssues ,recordAppointment,recordDoctor}) => {
+export const RecordCard = ({ recordName, recordAttachment , recordIssues ,recordAppointment,recordDoctor , recordId}) => {
+
+  const handleDownload = async () => {
+    const response = await fetch(recordAttachment);
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+  
+    // Extract the file extension from the URL
+    const fileExtension = recordAttachment.split('.').pop();
+  
+    // Use the file extension when setting the 'download' attribute
+    link.setAttribute('download', `file.${fileExtension}`);
+  
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  };
+
+  const handleDelete = async(id) => {
+    try {
+      const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/record/deleteRecord/${id}`, {
+        headers: {
+          'Authorization': localStorage.getItem("token"),
+        },
+        withCredentials: true
+      });
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }  
+};
+
   return (
     <div className="bg-gray-300 w-72 h-40 rounded-md">
       <div className="bg-gray-100 h-20 rounded-t">
-        <iframe src={recordAttachment} className='w-full h-full overflow-none'></iframe>
+        <img src={recordAttachment} className='w-full h-full overflow-allow'></img>
       </div>
       <div className="bg-gray-300 h-20 flex flex-col justify-between px-1 ">
         <div className="font-semibold text-xl">
@@ -79,15 +112,25 @@ export const Card = ({ recordName, recordAttachment , recordIssues ,recordAppoin
                     </Carousel> */}
                     <div className='my-2 mx-2'>
                       <iframe src={recordAttachment} className='w-full h-full overflow-none'></iframe>
-                      <a href={recordAttachment} target="_blank" rel="noopener noreferrer">Open Document</a>
+                      {/* <a href={recordAttachment} target="_blank" rel="noopener noreferrer">Open Document</a> */}
                     </div>
                   </label>
                 </div>
               </DialogHeader>
             </DialogContent>
           </Dialog>
-          <MdOutlineFileDownload size={25} opacity={0.75} />
-          <MdDelete size={25} opacity={0.75} />
+          <MdOutlineFileDownload size={25} opacity={0.75} onClick={handleDownload} />
+          <Dialog>
+            <DialogTrigger><MdDelete size={25} opacity={0.75}/></DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>
+                  Are you sure you want to delete this record?
+                </DialogTitle>
+              </DialogHeader>
+              <Button onClick={()=>handleDelete(recordId)}>Yes, delete</Button>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     </div>
@@ -101,17 +144,13 @@ const Records = () => {
   const [doctorName, setDoctorName] = useState("");
   const [files, setFiles] = useState(null);
   const [selectedIssue, setSelectedIssue] = useState("All Records");
-  // const [records, setRecords] = useState([]);
+  const [newIssue, setNewIssue] = useState("");
   const navigate = useNavigate();
   const [isAuthenticated, setisAuthenticated] = useRecoilState(Authenticated);
 
   const [issues , setIssues] = useState([]);
   const [records , setRecords] = useState([]);
    
-  // const issues = ['Issue 1', 'Issue 2', 'Issue 3'];
-  // const records = [
-  //   { name: 'Record 1', date: '2024-01-01T00:00:00.000Z', issue: issues[0] },
-  // ];
 
   useEffect(
     () => {
@@ -221,6 +260,24 @@ const Records = () => {
       setFiles(null);
   }  
 
+  const handleAddIssue = async () => {
+
+    const newIssues = [...issues,newIssue];
+    console.log(newIssues)
+
+    const id = localStorage.getItem("_id");
+
+    const res = await axios.patch(`${import.meta.env.VITE_BACKEND_URL}/api/user/updateUser/${id}`, {issues : newIssues}  , {
+      headers: {
+        'Authorization': localStorage.getItem("token"),
+      },
+      withCredentials: true
+    });
+
+    console.log(res.data);
+  };
+  
+
   return (
     <div className="px-4 py-4 " style={{ maxHeight: '100vh', overflowY: 'auto' }}>
       <div className="flex flex-row justify-between">
@@ -238,6 +295,20 @@ const Records = () => {
                   </DropdownMenuItem>
                 ))}
                 <DropdownMenuItem onSelect={() => setSelectedIssue(null)}>All Records</DropdownMenuItem>
+                <DropdownMenu>
+                <Dialog>
+                    <DialogTrigger>+Add Issue</DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>
+                          Add a new issue
+                        </DialogTitle>
+                      </DialogHeader>
+                      <Input type="text" value={newIssue} onChange={(e) => setNewIssue(e.target.value)} />
+                      <Button onClick={handleAddIssue}>Submit</Button>
+                    </DialogContent>
+                  </Dialog>
+                </DropdownMenu>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -302,12 +373,14 @@ const Records = () => {
           </div>
           <div className="mt-6 mx-8 grid grid-cols-3 gap-6 overflow-y-auto" style={{ maxHeight: '400px' }}>
             {records.map((record, index) => (
-              <Card key={index} 
+              <RecordCard key={index} 
               recordName={record.name}
-              recordAppointment={record.appointment}
+              recordAppointment={format(parseISO(record.appointment), 'dd MMMM yyyy')}
               recordIssues={record.issue} 
               recordDoctor={record.doctor_name} 
-              recordAttachment={record.attachment}/>
+              recordAttachment={record.attachment}
+              recordId = {record._id}
+              />
             ))}
           </div>
         </div>
@@ -316,5 +389,4 @@ const Records = () => {
   )
 }
 
-//{ recordName, recordAttachment , recordIssues ,recordAppointment,recordDoctor}
 export default Records;

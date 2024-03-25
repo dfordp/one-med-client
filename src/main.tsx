@@ -9,7 +9,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <RecoilRoot>
-      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
       <App />
       </ThemeProvider>
       <CustomToaster/>

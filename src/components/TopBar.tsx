@@ -1,15 +1,37 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { ModeToggle } from "./mode-toggle"
+import { ModeToggle } from "./mode-toggle" 
+import { useEffect, useState } from "react"
+import axios from "axios"
 
 const TopBar = () => {
+
+  const [pic,setPic] = useState("");
+
+  useEffect(()=>{
+
+    const addPic = async() => {
+
+      const _id = localStorage.getItem("_id")
+      const userData = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/getUser/${_id}`,{
+        headers :{
+          'Authorization': localStorage.getItem("token"),
+        },
+        withCredentials:true,
+      });
+      setPic(userData.data.image)
+    }
+
+    addPic()
+  } 
+    ,[])
+
   return (
     <div className="bg-white w-[1430px] h-[80px] shadow-sm px-4">
      <div className="flex flex-row justify-end my-3 gap-4">
-        <ModeToggle/>
-        <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png" />
-            <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
+        {/* <ModeToggle/> */}
+        <div>
+          <img src={pic} className="w-10 h-10 rounded-full"/>
+        </div>
      </div>
     </div>
   )

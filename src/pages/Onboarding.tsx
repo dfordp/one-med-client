@@ -71,7 +71,7 @@ const Onboarding = () => {
       const _id = res.data.newUser._id;
       localStorage.setItem("token",token);
       localStorage.setItem("_id",_id); 
-      window.location.reload();
+      navigate('/records')
     }
     catch(e){
       console.log(e);   

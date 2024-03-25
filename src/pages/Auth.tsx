@@ -10,7 +10,7 @@ const Auth = () => {
 
   const sendUserData = async (data) => {
     try {
-      const checkUser = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/getUserByEmail/${data.email}`);
+      const checkUser = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/getUserByEmailAuth/${data.email}`);
       console.log(checkUser);
 
       if(checkUser.data){
