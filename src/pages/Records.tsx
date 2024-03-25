@@ -25,11 +25,36 @@ import { Button } from "@/components/ui/button"
 //   CarouselPrevious,
 // } from "@/components/ui/carousel"
 import { useNavigate } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { Authenticated } from "../atom"
 import axios from 'axios';
 
-export const RecordCard = ({ recordName, recordAttachment , recordIssues ,recordAppointment,recordDoctor , recordId}) => {
+interface RecordCardProps {
+  recordName: string;
+  recordAttachment: string;
+  recordIssues: string;
+  recordAppointment: string;
+  recordDoctor: string;
+  recordId: string;
+}
+
+
+interface Record {
+  issue: string;
+  appointment: string;
+  // Add other properties as needed
+}
+
+interface RecordType {
+  name: string;
+  appointment: string;
+  issue: string;
+  doctor_name: string;
+  attachment: string;
+  _id: string;
+}
+
+export const RecordCard = ({ recordName, recordAttachment , recordIssues ,recordAppointment,recordDoctor , recordId}: RecordCardProps) => {
 
   const handleDownload = async () => {
     const response = await fetch(recordAttachment);
@@ -49,7 +74,7 @@ export const RecordCard = ({ recordName, recordAttachment , recordIssues ,record
     link.remove();
   };
 
-  const handleDelete = async(id) => {
+  const handleDelete = async(id: string) => {
     try {
       const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/record/deleteRecord/${id}`, {
         headers: {
@@ -143,13 +168,13 @@ const Records = () => {
   const [dateOfCreation, setDateOfCreation] = useState("");
   const [doctorName, setDoctorName] = useState("");
   const [files, setFiles] = useState(null);
-  const [selectedIssue, setSelectedIssue] = useState("All Records");
+  const [selectedIssue, setSelectedIssue] = useState<string | null>(null);
   const [newIssue, setNewIssue] = useState("");
   const navigate = useNavigate();
-  const [isAuthenticated, setisAuthenticated] = useRecoilState(Authenticated);
+  const  setisAuthenticated = useSetRecoilState(Authenticated);
 
   const [issues , setIssues] = useState([]);
-  const [records , setRecords] = useState([]);
+  const [records, setRecords] = useState<RecordType[]>([]);
    
 
   useEffect(
@@ -202,9 +227,12 @@ const Records = () => {
     }, []);
 
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFiles(event.target.files[0]);
-  };
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (event.target.files) {
+        setFiles(event.target.files[0] as unknown as null);
+      }
+    };
+  
 
 
 
@@ -217,15 +245,17 @@ const Records = () => {
     
   const sortedRecords = filteredRecords.sort((a, b) => parseISO(b.appointment).getTime() - parseISO(a.appointment).getTime());
   
-  const recordsByDate = sortedRecords.reduce((acc, record) => {
+  //@ts-ignore
+  const recordsByDate = sortedRecords.reduce((acc: Record<string, RecordType[]>, record: RecordType) => {
     const dateKey = format(parseISO(record.appointment), 'dd MMMM yyyy');
     if (!acc[dateKey]) {
       acc[dateKey] = [];
     }
     acc[dateKey].push(record);
     return acc;
-  }, {});
-  
+    //@ts-ignore
+  }, {} as Record<string, RecordType[]>);
+
 
   const handleSubmit = async (event: React.FormEvent) => {
 
@@ -372,16 +402,16 @@ const Records = () => {
             {date}
           </div>
           <div className="mt-6 mx-8 grid grid-cols-3 gap-6 overflow-y-auto" style={{ maxHeight: '400px' }}>
-            {records.map((record, index) => (
-              <RecordCard key={index} 
+            {(records as RecordType[]).map((record: RecordType, index: number) => (
+            <RecordCard key={index} 
               recordName={record.name}
               recordAppointment={format(parseISO(record.appointment), 'dd MMMM yyyy')}
               recordIssues={record.issue} 
               recordDoctor={record.doctor_name} 
               recordAttachment={record.attachment}
               recordId = {record._id}
-              />
-            ))}
+            />
+          ))}
           </div>
         </div>
       ))}

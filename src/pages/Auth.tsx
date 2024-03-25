@@ -7,8 +7,13 @@ import axios from "axios";
 const Auth = () => {
   const navigate = useNavigate();
 
+  interface UserData {
+    email: string;
+    // include other properties as needed
+  }
+  
 
-  const sendUserData = async (data) => {
+  const sendUserData = async (data: UserData) => {
     try {
       const checkUser = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/getUserByEmailAuth/${data.email}`);
       console.log(checkUser);
@@ -23,8 +28,8 @@ const Auth = () => {
         navigate('/records')
         window.location.reload();
       }
-    } catch (error) {
-      if (error.response && error.response.status === 404) {
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error) && error.response && error.response.status === 404) {
         localStorage.setItem("email",data.email);
         navigate('/onboarding');
       } else {
@@ -32,21 +37,21 @@ const Auth = () => {
         console.error(error);
       }
     }
-}
-
+  }
 
   const signInWithGoogle = async () => {
-      signInWithPopup(auth,googleProvider).then((result)=>{
-          const email = result.user.email;
-          const data = {
-              email : email
-          }
-          console.log(data);
-          sendUserData(data)
-      }).catch((error) => {
-          console.log(error);
-      });
-
+    signInWithPopup(auth,googleProvider).then((result)=>{
+      const email = result.user.email;
+      if (email) {
+        const data = {
+          email: email
+        }
+        console.log(data);
+        sendUserData(data)
+      }
+    }).catch((error) => {
+      console.log(error);
+    });
   }
 
   return (

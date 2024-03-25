@@ -21,13 +21,29 @@ import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 
 
+interface RelationCardProps {
+  to_id: string;
+  relativeName: string;
+  relationType: string;
+}
 
-const RelationCard = ({ to_id , relativeName, relationType }) => {
+interface Relation {
+  _id: string;
+  appovedByToUser: string;
+  to_id: string;
+  relativeName: string;
+  relation: string;
+  // Add other properties as needed
+}
+
+
+
+const RelationCard = ({ to_id , relativeName, relationType }: RelationCardProps) => {
 
   const navigate = useNavigate();
   
   return(
-    <div onClick={(e)=>{navigate(`/relation/${to_id}`)}} className="w-72 h-20 rounded-md">
+    <div onClick={() => {navigate(`/relation/${to_id}`)}} className="w-72 h-20 rounded-md">
     <div className="flex flex-col justify-between px-1 py-1 bg-gray-100 h-20 rounded-t">
       <div className="font-semibold text-xl">
         {relativeName}
@@ -44,8 +60,8 @@ const Relations = () => {
   const [relationName, setRelationName] = useState("");
   const [relationType, setRelationType] = useState("");
   const [relationEmail, setRelationEmail] = useState("");
-  const [fromRelations, setFromRelations] = useState([]);
-  const [toRelations, setToRelations] = useState([]);
+  const [fromRelations, setFromRelations] = useState<Relation[]>([]);
+  const [toRelations, setToRelations] = useState<Relation[]>([]);
 
 
   useEffect(()=>{
@@ -61,7 +77,7 @@ const Relations = () => {
         withCredentials: true
       });
 
-      const unApprovedRelations = torelation.data.filter(relation => relation.appovedByToUser === "pending");
+      const unApprovedRelations = torelation.data.filter((relation: Relation) => relation.appovedByToUser === "pending");
 
       setToRelations(unApprovedRelations);
       
@@ -71,7 +87,7 @@ const Relations = () => {
         },
         withCredentials: true
       });
-      const approvedRelations = fromrelation.data.filter(relation => relation.appovedByToUser === "accepted");
+      const approvedRelations = fromrelation.data.filter((relation: Relation) => relation.appovedByToUser === "accepted");
 
       setFromRelations(approvedRelations);
     }
@@ -117,8 +133,8 @@ const Relations = () => {
   }
 
 
-  const handleApprove = async (relation) => {
-   console.log("approval triggered",relation._id);
+  const handleApprove = async (relation: Relation) => {
+    console.log("approval triggered",relation._id);
   
    const data = { "appovedByToUser" : "accepted"}
 
@@ -132,8 +148,8 @@ const Relations = () => {
     
 };
   
-  const handleReject = async (relation) => {
-    console.log("rejection triggered",relation._id);
+const handleReject = async (relation: Relation) => {
+  console.log("rejection triggered",relation._id);
   
     const data = { "appovedByToUser" : "rejected"}
  
@@ -157,7 +173,7 @@ const Relations = () => {
           <DropdownMenu>
             <DropdownMenuTrigger className="flex flex-row items-center gap-3 py-2"><FaCaretDown/> <div>Requests</div></DropdownMenuTrigger>
             <DropdownMenuContent>
-            {toRelations.map((relation, index) => (
+            {toRelations.map((relation: Relation, index: number) => (
             <DropdownMenuItem key={index}>
               <div className='flex flex-row gap-2'>
                 <div>
@@ -214,7 +230,7 @@ const Relations = () => {
         </div>
       </div>
       <div className="mt-6 mx-8 grid grid-cols-3 gap-3 overflow-y-auto" style={{ maxHeight: '400px' }}>
-        {fromRelations.map((relation, index) => (
+      {fromRelations.map((relation: Relation, index: number) => (
           <RelationCard key={index} to_id={relation.to_id} relativeName={relation.relativeName} relationType={relation.relation} />
         ))}
       </div>

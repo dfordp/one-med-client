@@ -8,7 +8,7 @@ const Sidebar = () => {
     { name: 'Links', icon: IoLinkOutline , path: '/links' },
     { name: 'Relation', icon: IoPeopleOutline , path: '/relation' },
     { name: 'Profile', icon: IoPersonOutline , path: '/profile' },
-    { name:'Logout' , icon : IoLogOutOutline }
+    { name:'Logout' , icon : IoLogOutOutline ,path : '/logout'}
   ];
 
   const handleLogout = () => {

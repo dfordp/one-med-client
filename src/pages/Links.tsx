@@ -1,6 +1,5 @@
-import { format } from 'date-fns';
-import { useState } from "react";
-import { FaCaretDown,FaTimes } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { FaCaretDown } from "react-icons/fa";
 import { IoLinkOutline } from 'react-icons/io5';
 
 import { DialogTrigger } from "@radix-ui/react-dialog";
@@ -19,66 +18,113 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
-const LinkCard = ({ linkName,linkIssues, linkUrl }) => {
+interface Link {
+  _id: string;
+  name: string;
+  relatedIssue: string;
+  // add other properties of your link objects here
+}
+
+const LinkCard = ({ _id, name, relatedIssue }: Link) => {
 
   const navigate = useNavigate();
 
-  return(
-    <div onClick={(e)=>{navigate(`/link/${123}`)}} className="w-72 h-20 rounded-md">
-    <div className="bg-gray-50 rounded-md h-20 flex flex-col justify-between px-1 "> 
-      <div className="font-semibold text-xl">
-        {linkName}
-      </div>
-      <div className="flex flex-row justify-between mb-1 mx-1 gap-2"> 
-        <div className="font-medium text-xs text-black opacity-75">
-          {linkIssues}
+  const onPressed = () => {
+    if(window !== undefined) {
+        window.navigator.clipboard.writeText(`http://localhost:5173/link/${_id}`);
+    }
+};
+
+    return(
+      <div onClick={()=>{navigate(`/link/${_id}`)}} className="w-72 h-20 rounded-md">
+        <div className="bg-gray-50 rounded-md h-20 flex flex-col justify-between px-1 "> 
+          <div className="font-semibold text-xl">
+            {name}
+          </div>
+          <div className="flex flex-row justify-between mb-1 mx-1 gap-2"> 
+            <div className="font-medium text-xs text-black opacity-75">
+              {relatedIssue}
+            </div>
+            <IoLinkOutline size={25} onClick={(e) => { e.stopPropagation(); onPressed(); }}/>
+          </div>
         </div>
-        <IoLinkOutline size={25}/>
       </div>
-    </div>
-  </div>
-  );
+    );
 };
 
 const Links = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const [linkName, setLinkName] = useState("");
-  const [linkUrl, setLinkUrl] = useState("");
-  const [dateOfCreation, setDateOfCreation] = useState("");
-  const [relatedIssues, setRelatedIssues] = useState([]);
-  const issues = ['Issue 1', 'Issue 2', 'Issue 3', 'Issue 4']; // replace with your issues
+  const [relatedIssue, setRelatedIssue] = useState("");
+  const [issues,setIssues] = useState([]);
+  const [links,setLinks] = useState([]);
+  //@ts-ignore
+  const [user,setUser] = useState({});
 
-  const handleSelectIssue = (issue) => {
-    if (!relatedIssues.includes(issue)) {
-      setRelatedIssues([...relatedIssues, issue]);
-    } else {
-      setRelatedIssues(relatedIssues.filter(i => i !== issue));
+
+  useEffect(()=>{
+
+    const addPic = async() => {
+
+      const _id = localStorage.getItem("_id")
+      const userData = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/getUser/${_id}`,{
+        headers :{
+          'Authorization': localStorage.getItem("token"),
+        },
+        withCredentials:true,
+      });
+      console.log(userData.data);
+
+      const links = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/link/getLink/${_id}`,{
+        headers :{
+          'Authorization': localStorage.getItem("token"),
+        },
+        withCredentials:true,
+      })
+
+      console.log(links.data)
+      
+      setLinks(links.data)
+      setUser(userData.data)
+      setIssues(userData.data.issues)
     }
-  };
 
-  const handleRemoveIssue = (issue) => {
-    setRelatedIssues(relatedIssues.filter(i => i !== issue));
-  };
+    addPic()
+  } 
+    ,[])
 
-  const links = [
-    { name: 'Link 1', url: 'http://example.com/1', date: new Date('2022-01-01') , issues: "Issue 1" },
-    { name: 'Link 2', url: 'http://example.com/2', date: new Date('2022-02-01') , issues: "Issue 2"},
-    // Add more links as needed
-  ];
+    const handleSelectIssue = (issue: string) => {
+      setRelatedIssue(issue);
+    };
 
-  // Sort links by date in descending order
-  const sortedLinks = links.sort((a, b) => b.date.getTime() - a.date.getTime());
 
-  // Group links by date
-  const linksByDate = sortedLinks.reduce((acc, link) => {
-    const dateKey = format(link.date, 'dd MMMM yyyy');
-    if (!acc[dateKey]) {
-      acc[dateKey] = [];
+  // const links = [
+  //   { name: 'Link 1', url: 'http://example.com/1', date: new Date('2022-01-01') , issues: "Issue 1" },
+  //   { name: 'Link 2', url: 'http://example.com/2', date: new Date('2022-02-01') , issues: "Issue 2"},
+  //   // Add more links as needed
+  // ];
+
+
+  const handleSubmit = async() => {
+    const data = {
+      user_id : localStorage.getItem("_id"),
+      linkName :linkName,
+      relatedIssue: relatedIssue,
     }
-    acc[dateKey].push(link);
-    return acc;
-  }, {});
+
+    console.log(data);
+
+    const link = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/link/createLink` , data , {
+        headers :{
+          'Authorization': localStorage.getItem("token"),
+        },
+        withCredentials:true,
+    });
+
+    console.log(link.data);
+    
+  }
 
   return (
     <div className="px-4 py-4 " style={{ maxHeight: '100vh', overflowY: 'auto' }}>
@@ -87,14 +133,6 @@ const Links = () => {
           Links
         </h1>
         <div className="my-2 gap-2 flex flex-row">
-          <div className="bg-black text-white px-4 rounded-md">
-          <DropdownMenu>
-            <DropdownMenuTrigger className="flex flex-row items-center gap-3 py-2"><FaCaretDown/> <div>All Links</div></DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem>All Links</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          </div>
           <div>
 
             <Dialog>
@@ -118,7 +156,9 @@ const Links = () => {
                   <DropdownMenu>
                     <DropdownMenuTrigger className="flex flex-row items-center gap-3 py-2">
                       <FaCaretDown/> 
-                      <div>{relatedIssues.length > 0 ? relatedIssues.join(', ') : "Select Issue"}</div>
+                      <div>
+                        <Input value={relatedIssue} className='w-full'/>
+                      </div>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                       {issues.map((issue, index) => (
@@ -128,25 +168,15 @@ const Links = () => {
                       ))}
                     </DropdownMenuContent>
                   </DropdownMenu>
-                  <div>
-                    {relatedIssues.map((issue, index) => (
-                      <div key={index} className="flex items-center gap-2">
-                        {issue}
-                        <button onClick={() => handleRemoveIssue(issue)}>
-                          <FaTimes />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
                 </label>
 
-
+{/* 
                 <label>
                   Date of Experiration:
-                  <Input type="date" value={dateOfCreation} onChange={e => setDateOfCreation(e.target.value)} />
-                </label>
+                  <Input type="date" value={dateOfExperation} onChange={e => setDateOfExperation(e.target.value)} />
+                </label> */}
 
-                <Button onClick={() => setIsOpen(false)}>
+                <Button onClick={handleSubmit}>
                   Create
                 </Button>
               </DialogContent>
@@ -154,18 +184,12 @@ const Links = () => {
           </div>
         </div>
       </div>
-      {Object.entries(linksByDate).map(([date, links]) => (
-        <div key={date}>
-          <div className="mt-6 mx-6 font-bold">
-            {date}
-          </div>
-          <div className="mt-6 mx-8 grid grid-cols-3 gap-6 overflow-y-auto" style={{ maxHeight: '400px' }}>
-            {links.map((link, index) => (
-              <LinkCard key={index} linkName={link.name} linkIssues={link.issues} linkUrl={link.url} />
-            ))}
-          </div>
-        </div>
-      ))}
+      
+      <div className="mt-6 mx-8 grid grid-cols-3 gap-6 overflow-y-auto" style={{ maxHeight: '400px' }}>
+        {links.map((link: Link, index: number) => (
+          <LinkCard key={index} _id={link._id} name={link.name} relatedIssue={link.relatedIssue} />
+          ))}
+      </div>
     </div>
   )
 }

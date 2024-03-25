@@ -20,30 +20,32 @@ const Onboarding = () => {
   const email = localStorage.getItem("email");
   const [name, setName] = useState('');
   const [gender, setGender] = useState('');
-  const [dob, setDob] = useState(null);
-  const [issues, setIssues] = useState([]);
+  const [dob, setDob] = useState<string | null>(null);
+  const [issues, setIssues] = useState<string[]>([]);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [issueInput, setIssueInput] = useState('');
-  const [selectedFile, setSelectedFile] = useState(null);
 
-  const handleDateChange = (event) => {
+  const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setDob(event.target.value);
   };
 
-  const handleFileChange = (event) => {
-    setSelectedFile(event.target.files[0]);
+  
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedFile(event.target.files ? event.target.files[0] : null);
   };
+  
 
   const handleAddIssue = () => {
     setIssues([...issues, issueInput]);
     setIssueInput('');
   };
 
-  const handleRemoveIssue = (index) => {
+  const handleRemoveIssue = (index: number) => {
     setIssues(issues.filter((_, i) => i !== index));
   };
-  
-  const handleSubmit = async (event) => { 
 
+
+  const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     try{
       event.preventDefault();
       console.log({

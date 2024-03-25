@@ -1,5 +1,5 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { ModeToggle } from "./mode-toggle" 
+// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+// import { ModeToggle } from "./mode-toggle" 
 import { useEffect, useState } from "react"
 import axios from "axios"
 
